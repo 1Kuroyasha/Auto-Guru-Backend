@@ -1,0 +1,61 @@
+{
+  "name": "auto-guru-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node ./dist/app.js --env \"production\"",
+    "dev": "ts-node-dev --respawn --cls --rs -- ./src/app.ts",
+    "lint": "eslint --ext .ts --config .eslintrc.json --fix -- ./src",
+    "format": "prettier --config .prettierrc.json --write \"./**/*.ts\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1Kuroyasha/Auto-Guru-Backend.git"
+  },
+  "author": "1Kuroyasha <MahmoudMuhammed7@outlook.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/1Kuroyasha/Auto-Guru-Backend/issues"
+  },
+  "homepage": "https://github.com/1Kuroyasha/Auto-Guru-Backend#readme",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/convict": "^6.1.1",
+    "@types/cors": "^2.8.12",
+    "@types/csurf": "^1.11.2",
+    "@types/express": "^4.17.13",
+    "@types/express-flash": "0.0.2",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/node": "^17.0.18",
+    "@types/passport": "^1.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1",
+    "ts-node": "^10.5.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "connect-mongo": "^4.6.0",
+    "convict": "^6.2.1",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "express": "^4.17.2",
+    "express-flash": "0.0.2",
+    "express-idempotency": "^1.0.5",
+    "helmet": "^5.0.2",
+    "http-status-codes": "^2.2.0",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.2.1",
+    "passport": "^0.5.2",
+    "winston": "^3.6.0"
+  }
+}
