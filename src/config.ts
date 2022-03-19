@@ -13,7 +13,6 @@ const configSchema = convict({
 			format: "port",
 			default: 8080,
 			env: "PORT",
-			arg: "port",
 		},
 		DATABASE: {
 			format: "*",
