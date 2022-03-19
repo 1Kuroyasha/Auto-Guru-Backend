@@ -22,10 +22,8 @@ export interface User {
 	phone: string;
 	email: string;
 	age: number;
-	address: string;
 }
 
 export interface Customer extends User {
 	salary: number;
-	wishlist: Array<Car>;
 }
