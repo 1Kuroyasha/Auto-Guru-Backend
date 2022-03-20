@@ -21,7 +21,7 @@ const configSchema = convict({
 	},
 });
 
-const env = configSchema.get("env");
+export const env = configSchema.get("env");
 
 const filePath = resolve(__dirname, `../config/${env}.json`);
 configSchema.loadFile([filePath]);
