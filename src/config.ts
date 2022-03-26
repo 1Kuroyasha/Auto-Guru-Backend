@@ -1,32 +1,29 @@
 import convict from "convict";
 import { resolve } from "path";
 
-const configSchema = convict({
+const config = convict({
 	env: {
 		format: ["production", "development", "testing"],
 		default: "development",
 		env: "NODE_ENV",
 		arg: "env",
 	},
-	config: {
-		PORT: {
-			format: "port",
-			default: 8080,
-			env: "PORT",
-		},
-		DATABASE: {
-			format: "*",
-			default: "mongodb://localhost:27017/",
-		},
+	PORT: {
+		format: "port",
+		default: 8080,
+		env: "PORT",
+	},
+	DATABASE: {
+		format: "*",
+		default: "mongodb://localhost:27017/",
 	},
 });
 
-const env = configSchema.get("env");
+const env = config.get("env");
 
 const filePath = resolve(__dirname, `../config/${env}.json`);
-configSchema.loadFile([filePath]);
+config.loadFile([filePath]);
 
-configSchema.validate({ allowed: "strict" });
+config.validate({ allowed: "strict" });
 
-const config = configSchema.get("config");
-export default config;
+export default config.getProperties();
