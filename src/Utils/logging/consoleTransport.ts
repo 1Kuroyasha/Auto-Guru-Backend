@@ -1,6 +1,8 @@
 import winston, { format } from "winston";
 
-import { env } from "../../config";
+import config from "../../config";
+
+const { env } = config;
 
 const logFormat = format.printf(
 	({ level, message, timestamp }) =>

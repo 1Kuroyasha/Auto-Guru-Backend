@@ -1,4 +1,4 @@
-import config, { env } from "./config";
+import config from "./config";
 
 import express from "express";
 import cors from "cors";
@@ -11,7 +11,7 @@ const PORT = config.PORT;
 
 const app = express();
 
-const strategy = env === "DEVELOPMENT" ? "dev" : "short";
+const strategy = config.env === "DEVELOPMENT" ? "dev" : "short";
 app.use(morgan(strategy));
 
 app.use(cors());
