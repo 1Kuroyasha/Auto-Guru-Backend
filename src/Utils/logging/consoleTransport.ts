@@ -6,11 +6,11 @@ const { env } = config;
 
 const logFormat = format.printf(
 	({ level, message, timestamp }) =>
-		`${env === "DEVELOPMENT" ? `[${timestamp}]` : ""} [${level}] ${message}`,
+		`${env === "development" ? `[${timestamp}]` : ""} [${level}] ${message}`,
 );
 
 export default new winston.transports.Console({
-	level: env === "DEVELOPMENT" ? "debug" : "info",
+	level: env === "development" ? "debug" : "info",
 	stderrLevels: ["errors"],
 	consoleWarnLevels: ["warn"],
 	format: format.combine(

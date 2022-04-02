@@ -5,6 +5,6 @@ import consoleTransport from "./consoleTransport";
 
 export default winston.createLogger({
 	exitOnError: false,
-	level: config.env === "DEVELOPMENT" ? "debug" : "info",
+	level: config.env === "development" ? "debug" : "info",
 	transports: [consoleTransport],
 });

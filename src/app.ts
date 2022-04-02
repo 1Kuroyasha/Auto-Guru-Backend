@@ -11,7 +11,7 @@ const PORT = config.PORT;
 
 const app = express();
 
-const strategy = config.env === "DEVELOPMENT" ? "dev" : "short";
+const strategy = config.env === "development" ? "dev" : "short";
 app.use(morgan(strategy));
 
 app.use(cors());
