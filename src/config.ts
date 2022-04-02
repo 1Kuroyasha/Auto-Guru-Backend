@@ -19,7 +19,7 @@ const config = convict({
 	},
 });
 
-const env = config.get("env");
+export const env = config.get("env");
 
 const filePath = resolve(__dirname, `../config/${env}.json`);
 config.loadFile([filePath]);
