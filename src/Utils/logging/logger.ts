@@ -1,10 +1,10 @@
 import winston from "winston";
 
-import { env } from "../../config";
+import config from "../../config";
 import consoleTransport from "./consoleTransport";
 
 export default winston.createLogger({
 	exitOnError: false,
-	level: env === "DEVELOPMENT" ? "debug" : "info",
+	level: config.env === "development" ? "debug" : "info",
 	transports: [consoleTransport],
 });
