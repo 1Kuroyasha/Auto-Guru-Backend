@@ -1,6 +1,7 @@
 import mongoose, { Mongoose } from "mongoose";
 
 import config from "../config";
+import CustomError from "../Structures/Errors";
 import logger from "../Utils/logging/logger";
 
 let connection: Mongoose;
@@ -18,7 +19,7 @@ const connect = async () => {
 		connection = client;
 		return connection;
 	} catch (e) {
-		throw new Error("Can't connect to database server");
+		throw CustomError.InternalServerError("Can't connect to database server");
 	}
 };
 
