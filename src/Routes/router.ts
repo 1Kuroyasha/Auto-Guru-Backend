@@ -1,9 +1,11 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+
+import CustomError from "../Structures/Errors";
 
 const router = Router();
 
-router.get("*", (req: Request, res: Response): void => {
-	res.sendStatus(404);
+router.get("*", () => {
+	throw CustomError.NotFound("this route is not available");
 });
 
 export default router;
