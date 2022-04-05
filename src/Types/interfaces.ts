@@ -27,3 +27,8 @@ export interface User {
 export interface Customer extends User {
 	salary: number;
 }
+
+export interface CustomError extends Error {
+	type: string;
+	status: number;
+}
