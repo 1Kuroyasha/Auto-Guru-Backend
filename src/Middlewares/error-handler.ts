@@ -22,5 +22,8 @@ export const errorHandler = (
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	_: NextFunction,
 ) => {
-	res.status(err.status).send(err.message);
+	res.status(err.status);
+	if (err.type === "INTERNAL_SERVER_ERROR") return res.send(err.type);
+
+	res.send(err.message);
 };
