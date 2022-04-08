@@ -26,8 +26,8 @@ class InternalServerError extends CustomError {
 }
 
 class ValidationError extends CustomError {
-	constructor(message: string) {
-		super(message, StatusCodes.BAD_REQUEST, "BAD_REQUEST");
+	constructor(message: string, status: number = StatusCodes.BAD_REQUEST) {
+		super(message, status, "VALIDATION_ERROR");
 	}
 }
 

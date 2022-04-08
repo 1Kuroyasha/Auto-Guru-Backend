@@ -1,11 +1,17 @@
-import { Router } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 
 import CustomErrors from "../Structures/Errors";
+import * as routers from "./API/index";
 
-const router = Router();
+const mainRouter = Router();
 
-router.get("*", () => {
-	throw new CustomErrors.NotFound("this route is not available");
+Object.values(routers).forEach(router => {
+	mainRouter.use(router);
 });
 
-export default router;
+mainRouter.get("*", (req: Request, res: Response, next: NextFunction) => {
+	const err = new CustomErrors.NotFound("this route is not available");
+	next(err);
+});
+
+export default mainRouter;

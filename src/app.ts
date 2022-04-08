@@ -14,8 +14,8 @@ const app = express();
 
 const loggingStrategy = config.env === "development" ? "dev" : "short";
 app.use(morgan(loggingStrategy));
-
 app.use(cors());
+app.use(express.json());
 
 app.use(router);
 

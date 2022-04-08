@@ -1,12 +1,13 @@
+import config from "../config";
+
 import mongoose, { Mongoose } from "mongoose";
 
-import config from "../config";
 import CustomErrors from "../Structures/Errors";
 import logger from "../Utils/logging/logger";
 
 let connection: Mongoose;
 
-const connect = async () => {
+const connect = async (): Promise<Mongoose> => {
 	if (connection) return connection;
 
 	try {
