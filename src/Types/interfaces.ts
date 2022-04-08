@@ -1,3 +1,5 @@
+export type UserType = "CUSTOMER" | "OWNER";
+
 export interface Car {
 	make: string;
 	model: string;
@@ -16,14 +18,30 @@ export interface Store {
 }
 
 export interface User {
+	id?: string;
 	username: string;
 	password: string;
 	name: string;
 	phone: string;
 	email: string;
 	age: number;
+	userType: UserType;
 }
 
 export interface Customer extends User {
-	salary: number;
+	salary?: number;
+}
+
+export interface Owner extends User {
+	store?: Store;
+}
+
+export interface Credentials {
+	email: string;
+	password: string;
+}
+
+export interface CustomError extends Error {
+	type: string;
+	status: number;
 }

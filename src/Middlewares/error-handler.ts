@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import CustomError from "../Structures/Errors";
+
+import { CustomError } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
 
 export const errorLogger = (
@@ -19,7 +20,11 @@ export const errorHandler = (
 	err: CustomError,
 	req: Request,
 	res: Response,
-	_: NextFunction,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	next: NextFunction,
 ) => {
-	res.status(err.status).send(err.message);
+	res.status(err.status);
+	if (err.type === "INTERNAL_SERVER_ERROR") return res.send(err.type);
+
+	res.send(err.message);
 };
