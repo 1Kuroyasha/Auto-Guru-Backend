@@ -1,3 +1,5 @@
+import config from "../config";
+
 import { NextFunction, Request, Response } from "express";
 
 import { CustomError } from "../Types/interfaces";
@@ -9,7 +11,7 @@ export const errorLogger = (
 	res: Response,
 	next: NextFunction,
 ) => {
-	if (err.type === "INTERNAL_SERVER_ERROR") {
+	if (err.type === "INTERNAL_SERVER_ERROR" || config.env === "development") {
 		logger.error(err.message);
 	}
 
