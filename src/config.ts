@@ -1,5 +1,5 @@
-import convict from "convict";
 import { resolve } from "path";
+import convict from "convict";
 
 const config = convict({
 	env: {
@@ -15,12 +15,19 @@ const config = convict({
 	},
 	DATABASE: {
 		format: "*",
-		default: "mongodb://localhost:27017/",
+		default: "mongodb://localhost:27017/test",
+	},
+	SALT: {
+		format: "int",
+		default: 6,
+	},
+	JWT_SECRET: {
+		format: "*",
+		default: "SecretText",
 	},
 });
 
 const env = config.get("env");
-
 const filePath = resolve(__dirname, `../config/${env}.json`);
 config.loadFile([filePath]);
 
