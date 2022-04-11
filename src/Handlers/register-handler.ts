@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { StatusCodes } from "http-status-codes";
 
 import User from "../Models/User";
 import CustomErrors from "../Structures/Errors";
-import hashPassword from "../Utils/bcrypt";
+import { hashPassword } from "../Utils/bcrypt";
 import { signUser } from "../Utils/jwt";
 import { checkForMissingParams } from "../Utils/utils";
 import { userSchema } from "../Utils/validation/register-schemas";
@@ -87,7 +88,7 @@ export const register = async (req: Request, res: Response) => {
 
 		const token = await signUser(id);
 
-		res.status(201).json(token);
+		res.status(StatusCodes.CREATED).json({ token: `Bearer ${token}` });
 	} catch (e) {
 		const { message } = e as Error;
 		throw new CustomErrors.InternalServerError(message);
