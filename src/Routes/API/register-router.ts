@@ -3,9 +3,10 @@ import { Router } from "express";
 import {
 	checkRequiredFields,
 	checkEmailAvailability,
-	validateRegister,
 	register,
 } from "../../Handlers/register-handler";
+import { validate } from "../../Middlewares/validation";
+import { userSchema } from "../../Utils/validation/register-schemas";
 
 const router = Router();
 
@@ -14,7 +15,7 @@ router
 	.post(
 		checkRequiredFields,
 		checkEmailAvailability,
-		validateRegister,
+		validate(userSchema),
 		register,
 	);
 

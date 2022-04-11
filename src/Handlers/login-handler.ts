@@ -1,26 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
-import { loginSchema } from "../Utils/validation/login-schema";
 import { comparePasswords } from "../Utils/bcrypt";
 import CustomErrors from "../Structures/Errors";
 import User from "../Models/User";
 import { signUser } from "../Utils/jwt";
-
-export const validateLogin = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	try {
-		await loginSchema.validateAsync(req.body);
-		return next();
-	} catch (e) {
-		const { message } = e as Error;
-		const err = new CustomErrors.ValidationError(message);
-		next(err);
-	}
-};
 
 export const login = async (
 	req: Request,

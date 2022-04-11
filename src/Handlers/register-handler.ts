@@ -54,21 +54,6 @@ export const checkEmailAvailability = async (
 	}
 };
 
-export const validateRegister = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	try {
-		await userSchema.validateAsync(req.body);
-		return next();
-	} catch (e) {
-		const { message } = e as Error;
-		const err = new CustomErrors.ValidationError(message);
-		next(err);
-	}
-};
-
 export const register = async (req: Request, res: Response) => {
 	const { username, password, name, phone, email, age, salary, userType } =
 		req.body;
