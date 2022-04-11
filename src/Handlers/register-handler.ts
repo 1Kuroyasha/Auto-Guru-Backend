@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 
 import User from "../Models/User";
 import CustomErrors from "../Structures/Errors";
-import hashPassword from "../Utils/bcrypt";
+import { hashPassword } from "../Utils/bcrypt";
 import { signUser } from "../Utils/jwt";
 import { checkForMissingParams } from "../Utils/utils";
 import { userSchema } from "../Utils/validation/register-schemas";

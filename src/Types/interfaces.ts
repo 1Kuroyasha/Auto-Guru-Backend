@@ -41,6 +41,13 @@ export interface Credentials {
 	password: string;
 }
 
+export interface UserInfo {
+	_id: string;
+	email: string;
+	password: string;
+	userType: string;
+}
+
 export interface CustomError extends Error {
 	type: string;
 	status: number;

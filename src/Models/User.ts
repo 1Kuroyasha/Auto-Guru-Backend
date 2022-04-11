@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 import connect from "../Controllers/mongo-controller";
-import { Credentials, Customer, Owner } from "../Types/interfaces";
+import { Customer, Owner, UserInfo } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
 
 const userSchema = new Schema(
@@ -56,11 +56,12 @@ class User {
 		return newUser._id;
 	}
 
-	async findUserByEmail(email: string): Promise<Credentials | null> {
+	async findUserByEmail(email: string): Promise<UserInfo | null> {
 		await connect();
 		const match = await User.collection.findOne(
 			{ email },
 			{
+				_id: 1,
 				email: 1,
 				password: 1,
 				userType: 1,
