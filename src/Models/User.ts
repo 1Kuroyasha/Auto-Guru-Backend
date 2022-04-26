@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 
+import CustomErrors from "../Structures/Errors";
 import connect from "../Controllers/mongo-controller";
 import { Customer, Owner, UserInfo } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
@@ -69,6 +70,17 @@ class User {
 		);
 
 		return match ? match : null;
+	}
+
+	async getUserTypeById(id: string): Promise<string> {
+		await connect();
+		const match = await User.collection.findById(id, { userType: 1 });
+
+		if (!match) {
+			throw new CustomErrors.NotAuthorized("Invalid access token");
+		}
+
+		return match.userType;
 	}
 }
 
