@@ -9,3 +9,15 @@ export const signUser = (id: string) =>
 			resolve(token);
 		});
 	});
+
+export const getIdFromJwt = (token: string): Promise<string | null> =>
+	new Promise(resolve => {
+		jwt.verify(token, config.JWT_SECRET, async (err, jwtPayload) => {
+			if (!err) {
+				const { id } = jwtPayload as jwt.JwtPayload;
+				if (!id) resolve(null);
+
+				resolve(id);
+			} else resolve(null);
+		});
+	});

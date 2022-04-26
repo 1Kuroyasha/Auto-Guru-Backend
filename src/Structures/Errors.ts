@@ -31,9 +31,21 @@ class ValidationError extends CustomError {
 	}
 }
 
+class BadRequest extends CustomError {
+	constructor(message: string) {
+		super(message, StatusCodes.BAD_REQUEST, "BAD_REQUEST");
+	}
+}
+
 class NotAuthorized extends CustomError {
 	constructor(message: string) {
 		super(message, StatusCodes.UNAUTHORIZED, "NOT_AUTHORIZED");
+	}
+}
+
+class Forbidden extends CustomError {
+	constructor() {
+		super("This resource is forbidden", StatusCodes.FORBIDDEN, "FORBIDDEN");
 	}
 }
 
@@ -48,4 +60,6 @@ export default {
 	ValidationError,
 	NotAuthorized,
 	NotFound,
+	BadRequest,
+	Forbidden,
 };

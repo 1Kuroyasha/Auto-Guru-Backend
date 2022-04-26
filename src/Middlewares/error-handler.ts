@@ -26,7 +26,9 @@ export const errorHandler = (
 	next: NextFunction,
 ) => {
 	res.status(err.status);
-	if (err.type === "INTERNAL_SERVER_ERROR") return res.send(err.type);
+	const response = {
+		message: err.type === "INTERNAL_SERVER_ERROR" ? err.type : err.message,
+	};
 
-	res.send(err.message);
+	res.send(response);
 };
