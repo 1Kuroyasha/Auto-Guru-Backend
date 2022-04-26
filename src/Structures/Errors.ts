@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 
-class CustomError extends Error {
+export class CustomError extends Error {
 	private __type: string;
 	private __status: number;
 

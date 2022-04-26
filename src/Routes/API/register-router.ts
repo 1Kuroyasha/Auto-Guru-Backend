@@ -1,11 +1,10 @@
 import { Router } from "express";
 
 import {
-	checkRequiredFields,
 	checkEmailAvailability,
 	register,
 } from "../../Handlers/register-handler";
-import { validate } from "../../Middlewares/validation";
+import { checkRequiredFields, validate } from "../../Middlewares/validation";
 import { userSchema } from "../../Utils/validation/register-schemas";
 
 const router = Router();
@@ -13,7 +12,15 @@ const router = Router();
 router
 	.route("/register")
 	.post(
-		checkRequiredFields,
+		checkRequiredFields([
+			"username",
+			"password",
+			"name",
+			"phone",
+			"email",
+			"age",
+			"userType",
+		]),
 		checkEmailAvailability,
 		validate(userSchema),
 		register,

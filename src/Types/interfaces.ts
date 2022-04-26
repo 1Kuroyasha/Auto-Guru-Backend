@@ -47,8 +47,3 @@ export interface UserInfo {
 	password: string;
 	userType: string;
 }
-
-export interface CustomError extends Error {
-	type: string;
-	status: number;
-}

@@ -6,7 +6,11 @@ import morgan from "morgan";
 
 import logger from "./Utils/logging/logger";
 import router from "./Routes/router";
-import { errorLogger, errorHandler } from "./Middlewares/error-handler";
+import {
+	errorLogger,
+	errorHandler,
+	errorAdapter,
+} from "./Middlewares/error-handler";
 
 const PORT = config.PORT;
 
@@ -19,6 +23,7 @@ app.use(express.json());
 
 app.use(router);
 
+app.use(errorAdapter);
 app.use(errorLogger);
 app.use(errorHandler);
 

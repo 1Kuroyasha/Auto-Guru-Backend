@@ -2,10 +2,11 @@ import { Request, Response, NextFunction } from "express";
 import User from "../Models/User";
 
 import CustomErrors from "../Structures/Errors";
+import { UserType } from "../Types/interfaces";
 import { getIdFromJwt } from "../Utils/jwt";
 
 const auth =
-	(requiredType?: string) =>
+	(requiredType?: UserType) =>
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			if (!req.headers.authorization)

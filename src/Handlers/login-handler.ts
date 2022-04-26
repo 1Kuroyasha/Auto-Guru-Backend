@@ -15,20 +15,17 @@ export const login = async (
 
 	try {
 		const user = await User.findUserByEmail(email);
-		if (!user) return next(new CustomErrors.NotAuthorized("invalid email"));
+		if (!user) throw new CustomErrors.NotAuthorized("Invalid email");
 
 		const { _id: id, password: encrypted } = user;
 
 		const matched = await comparePasswords(password, encrypted);
-		if (!matched)
-			return next(new CustomErrors.NotAuthorized("invalid password"));
+		if (!matched) throw new CustomErrors.NotAuthorized("invalid password");
 
 		const token = await signUser(id);
 
 		res.status(StatusCodes.OK).json({ token: `Bearer ${token}` });
 	} catch (e) {
-		const { message } = e as Error;
-		const err = new CustomErrors.InternalServerError(message);
-		next(err);
+		next(e);
 	}
 };

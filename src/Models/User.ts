@@ -47,9 +47,9 @@ const userSchema = new Schema(
 );
 
 class User {
-	static collection = model("User", userSchema);
+	private static collection = model("User", userSchema);
 
-	async create(user: Customer | Owner): Promise<string> {
+	public static async create(user: Customer | Owner): Promise<string> {
 		await connect();
 		const newUser = await User.collection.create(user);
 		logger.debug("New customer added to the database");
@@ -57,7 +57,7 @@ class User {
 		return newUser._id;
 	}
 
-	async findUserByEmail(email: string): Promise<UserInfo | null> {
+	public static async findUserByEmail(email: string): Promise<UserInfo | null> {
 		await connect();
 		const match = await User.collection.findOne(
 			{ email },
@@ -69,10 +69,10 @@ class User {
 			},
 		);
 
-		return match ? match : null;
+		return match;
 	}
 
-	async getUserTypeById(id: string): Promise<string> {
+	public static async getUserTypeById(id: string): Promise<string> {
 		await connect();
 		const match = await User.collection.findById(id, { userType: 1 });
 
@@ -84,6 +84,4 @@ class User {
 	}
 }
 
-const user = new User();
-
-export default user;
+export default User;
