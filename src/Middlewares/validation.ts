@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { ObjectSchema } from "joi";
 
-import CustomErrors from "../Structures/Errors";
+import ErrorFactory from "../Types/Error";
+
 import { checkForMissingParams } from "../Utils/utils";
 
 export const validate =
@@ -11,7 +12,8 @@ export const validate =
 			await schema.validateAsync(req.body);
 			next();
 		} catch (e) {
-			next(e);
+			const err = e as Error;
+			next(new ErrorFactory(err.message, "BAD_REQUEST"));
 		}
 	};
 
@@ -21,8 +23,8 @@ export const checkRequiredFields =
 		try {
 			const missingParameters = checkForMissingParams(req.body, requiredParams);
 			if (missingParameters.length !== 0) {
-				const message = `field(s): [${missingParameters}] are required`;
-				throw new CustomErrors.ValidationError(message);
+				const message = `field(s): [ ${missingParameters} ] are required`;
+				throw new ErrorFactory(message, "VALIDATION_ERROR");
 			}
 			next();
 		} catch (e) {

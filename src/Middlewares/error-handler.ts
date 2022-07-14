@@ -2,8 +2,7 @@ import config from "../config";
 
 import { NextFunction, Request, Response } from "express";
 
-import CustomErrors, { CustomError } from "../Structures/Errors";
-
+import ErrorFactory, { CustomError } from "../Types/Error";
 import logger from "../Utils/logging/logger";
 
 export const errorAdapter = (
@@ -14,7 +13,7 @@ export const errorAdapter = (
 ) => {
 	if (err instanceof CustomError) return next(err);
 
-	next(new CustomErrors.InternalServerError(err.message));
+	next(new ErrorFactory(err.message));
 };
 
 export const errorLogger = (
@@ -41,5 +40,5 @@ export const errorHandler = (
 		message: err.type === "INTERNAL_SERVER_ERROR" ? err.type : err.message,
 	};
 
-	res.send(response);
+	res.status(err.status as number).send(response);
 };

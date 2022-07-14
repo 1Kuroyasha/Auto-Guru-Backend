@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, Router } from "express";
 
-import CustomErrors from "../Structures/Errors";
+import ErrorFactory from "../Types/Error";
 import * as routers from "./API/index";
 
 const mainRouter = Router();
@@ -10,7 +10,7 @@ Object.values(routers).forEach(router => {
 });
 
 mainRouter.get("*", (req: Request, res: Response, next: NextFunction) => {
-	const err = new CustomErrors.NotFound("this route is not available");
+	const err = new ErrorFactory("resource not found", "NOT_FOUND");
 	next(err);
 });
 

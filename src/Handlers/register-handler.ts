@@ -2,7 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import User from "../Models/User";
-import CustomErrors from "../Structures/Errors";
+import ErrorFactory from "../Types/Error";
+
 import { hashPassword } from "../Utils/bcrypt";
 import { signUser } from "../Utils/jwt";
 
@@ -18,7 +19,7 @@ export const checkEmailAvailability = async (
 			return next();
 		}
 
-		throw new CustomErrors.ValidationError("email is already registered");
+		throw new ErrorFactory("email is already registered", "VALIDATION_ERROR");
 	} catch (e) {
 		next(e);
 	}
@@ -31,6 +32,7 @@ export const register = async (
 ) => {
 	const { username, password, name, phone, email, age, salary, userType } =
 		req.body;
+
 	try {
 		const hashed = await hashPassword(password);
 
@@ -47,7 +49,7 @@ export const register = async (
 
 		const token = await signUser(id);
 		if (!token)
-			throw new CustomErrors.InternalServerError("Invalid jwt secret");
+			throw new ErrorFactory("Invalid jwt secret", "INTERNAL_SERVER_ERROR");
 
 		res.status(StatusCodes.CREATED).json({ token: `Bearer ${token}` });
 	} catch (e) {

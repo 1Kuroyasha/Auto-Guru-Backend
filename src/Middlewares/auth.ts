@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../Models/User";
+import ErrorFactory from "../Types/Error";
 
-import CustomErrors from "../Structures/Errors";
-import { UserType } from "../Types/interfaces";
+import { UserType } from "../Types/types";
 import { getIdFromJwt } from "../Utils/jwt";
 
 const auth =
@@ -10,19 +10,20 @@ const auth =
 	async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			if (!req.headers.authorization)
-				throw new CustomErrors.BadRequest("No access token");
+				throw new ErrorFactory("No access token", "BAD_REQUEST");
 
 			const match = req.headers.authorization.match(/^Bearer (.+)/);
 			const token = !match ? null : match[1];
-			if (!token) throw new CustomErrors.NotAuthorized("Invalid access token");
+			if (!token)
+				throw new ErrorFactory("Invalid access token", "UNAUTHORIZED");
 
 			const id = await getIdFromJwt(token);
-			if (!id) throw new CustomErrors.NotAuthorized("Invalid access token");
+			if (!id) throw new ErrorFactory("Invalid access token", "UNAUTHORIZED");
 
 			const userType = await User.getUserTypeById(id);
 
 			if (userType !== requiredType && requiredType)
-				throw new CustomErrors.Forbidden();
+				throw new ErrorFactory("FORBIDDEN", "FORBIDDEN");
 
 			next();
 		} catch (e) {

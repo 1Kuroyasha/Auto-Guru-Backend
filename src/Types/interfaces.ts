@@ -1,4 +1,4 @@
-export type UserType = "CUSTOMER" | "OWNER";
+import { UserType } from "./types";
 
 export interface Car {
 	make: string;

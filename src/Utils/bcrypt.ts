@@ -7,10 +7,7 @@ const { SALT } = config;
 export const hashPassword = async (password: string): Promise<string> =>
 	hash(password, SALT);
 
-export const comparePasswords = (password: string, encryptedPassword: string) =>
-	new Promise(resolve => {
-		compare(password, encryptedPassword, (err, matched) => {
-			if (err) resolve(null);
-			resolve(matched);
-		});
-	});
+export const comparePasswords = async (
+	password: string,
+	encryptedPassword: string,
+) => await compare(password, encryptedPassword);
