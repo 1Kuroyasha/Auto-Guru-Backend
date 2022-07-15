@@ -9,16 +9,16 @@ export interface Car {
 	numberOfDoors: number;
 	transmission: Transmission;
 	price: number;
-	availableColors: Array<string>;
 }
 
 export interface Store {
 	owner: userID;
+	name: string;
 	email: string;
 	phone: string;
 	address: string;
 	website: string;
-	cars: Array<CarID>;
+	cars?: Array<CarID>;
 }
 
 export interface UserInterface {
@@ -38,7 +38,7 @@ export interface Customer extends UserInterface {
 }
 
 export interface Owner extends UserInterface {
-	store?: string;
+	store: Store;
 }
 
 export interface Credentials {

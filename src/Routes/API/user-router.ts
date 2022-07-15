@@ -2,16 +2,14 @@ import { Router } from "express";
 
 import { authentication, authorization } from "../../Middlewares/auth";
 import { checkRequiredFields, validate } from "../../Middlewares/validation";
-import {
-	loginSchema,
-	registerSchema,
-} from "../../Utils/validation/user-schemas";
+import { loginSchema } from "../../Utils/validation/user-schemas";
 import {
 	getUser,
 	updateUser,
 	login,
 	register,
 	checkEmailAvailability,
+	validateUser,
 } from "../../Handlers/user-handler";
 
 const router = Router();
@@ -22,7 +20,7 @@ router.post(
 	"/register",
 	checkRequiredFields(["email"]),
 	checkEmailAvailability,
-	validate(registerSchema),
+	validateUser,
 	register,
 );
 

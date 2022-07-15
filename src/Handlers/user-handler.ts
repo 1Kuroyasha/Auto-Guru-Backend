@@ -5,6 +5,7 @@ import ErrorFactory from "../Types/Error";
 import User from "../Models/User";
 import { hashPassword, comparePasswords } from "../Utils/bcrypt";
 import { signUser } from "../Utils/jwt";
+import { customerSchema, ownerSchema } from "../Utils/validation/user-schemas";
 
 export const login = async (
 	req: Request,
@@ -24,7 +25,7 @@ export const login = async (
 
 		const token = await signUser(id);
 
-		res.status(StatusCodes.OK).json({ token: `Bearer ${token}` });
+		res.json({ token: `Bearer ${token}` });
 	} catch (e) {
 		next(e);
 	}
@@ -77,9 +78,7 @@ export const checkEmailAvailability = async (
 	try {
 		const { email } = req.body;
 		const found = await User.findUserByEmail(email);
-		if (!found) {
-			return next();
-		}
+		if (!found) return next();
 
 		throw ErrorFactory.validationError("email is already registered");
 	} catch (e) {
@@ -92,28 +91,43 @@ export const register = async (
 	res: Response,
 	next: NextFunction,
 ) => {
-	const { username, password, name, phone, email, age, salary, userType } =
-		req.body;
-
 	try {
+		const { password, ...user } = req.body;
 		const hashed = await hashPassword(password);
 
 		const id = await User.create({
-			username,
 			password: hashed,
-			name,
-			phone,
-			email,
-			age,
-			salary,
-			userType,
+			...user,
 		});
 
 		const token = await signUser(id);
 		if (!token) throw ErrorFactory.internalServerError("Invalid jwt secret");
 
-		res.status(StatusCodes.CREATED).json({ token: `Bearer ${token}` });
+		res.json({ token: `Bearer ${token}` });
 	} catch (e) {
+		next(e);
+	}
+};
+
+export const validateUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const userType = req.body.userType;
+		if (userType === "CUSTOMER") {
+			await customerSchema.validateAsync(req.body);
+		} else if (userType === "OWNER") {
+			await ownerSchema.validateAsync(req.body);
+		} else throw ErrorFactory.validationError("user type is invalid");
+
+		next();
+	} catch (e) {
+		const err = e as Error;
+		if (err.name === "ValidationError")
+			return next(ErrorFactory.validationError(err.message));
+
 		next(e);
 	}
 };

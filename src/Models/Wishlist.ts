@@ -1,19 +1,26 @@
 import { Schema, model } from "mongoose";
 
 import connect from "../Controllers/mongo-controller";
+import ErrorFactory from "../Types/Error";
 import logger from "../Utils/logging/logger";
 
-const wishlistSchema = new Schema({
-	userID: {
-		type: "string",
-		required: true,
-	},
-	cars: [
-		{
-			type: String,
+const wishlistSchema = new Schema(
+	{
+		userID: {
+			type: "string",
+			required: true,
 		},
-	],
-});
+		cars: [
+			{
+				type: String,
+			},
+		],
+	},
+	{
+		strict: true,
+		strictQuery: true,
+	},
+);
 
 class Wishlist {
 	private static collection = model("Wishlist", wishlistSchema);
@@ -30,7 +37,10 @@ class Wishlist {
 	public static async addCar(userID: string, carID: string) {
 		await connect();
 
-		// TODO: check if car is already in wishlist
+		const wishlist = await Wishlist.collection.findOne({ userID });
+		if (wishlist && wishlist.cars.includes(carID)) {
+			throw ErrorFactory.badRequest("Car already in the wishlist");
+		}
 
 		await Wishlist.collection.updateOne({ userID }, { $push: { cars: carID } });
 		logger.debug("Car added to the wishlist");

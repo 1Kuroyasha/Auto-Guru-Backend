@@ -13,7 +13,7 @@ export const getWishlist = async (
 		const wishlist = await Wishlist.getCars(res.locals.userID);
 		if (!wishlist) throw ErrorFactory.notFound("resource not found");
 
-		// TODO: get cars by id
+		// TODO: get cars by id (blocked by car model implementation)
 
 		res.json(wishlist);
 	} catch (e) {
@@ -29,7 +29,7 @@ export const addCarToWishlist = async (
 	try {
 		const { id: carID } = req.params;
 
-		// TODO: check if car exists
+		// TODO: check if car exists (blocked by car model implementation)
 
 		await Wishlist.addCar(res.locals.userID, carID);
 		res.sendStatus(StatusCodes.OK);

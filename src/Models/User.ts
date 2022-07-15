@@ -1,10 +1,11 @@
 import { Schema, model } from "mongoose";
 
 import connect from "../Controllers/mongo-controller";
-import { Customer, Owner, UserInfo, UserInterface } from "../Types/interfaces";
+import { Owner, UserInfo, UserInterface } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
 import ErrorFactory from "../Types/Error";
 import Wishlist from "./Wishlist";
+import Store from "./Store";
 
 const userSchema = new Schema(
 	{
@@ -50,14 +51,16 @@ const userSchema = new Schema(
 class User {
 	private static collection = model("User", userSchema);
 
-	public static async create(user: Customer | Owner): Promise<string> {
+	public static async create(user: UserInterface): Promise<string> {
 		await connect();
 		const { _id: id } = await User.collection.create(user);
 
 		if (user.userType === "CUSTOMER") {
 			Wishlist.create(id);
+		} else {
+			const owner = user as Owner;
+			Store.createStore(id, owner.store);
 		}
-		// TODO: add store for owner
 
 		logger.debug("New customer added to the database");
 
