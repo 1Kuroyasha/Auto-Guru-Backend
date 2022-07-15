@@ -1,8 +1,9 @@
 import { Schema, model } from "mongoose";
 
 import MongoController from "../Controllers/mongo-controller";
-import { Store } from "../Types/interfaces";
+import { Store, Car } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
+import CarModel from "./Car";
 
 const storeSchema = new Schema(
 	{
@@ -34,24 +35,28 @@ class StoreModel {
 		logger.debug("New store added to the database");
 	}
 
-	// // (blocked by car model implementation)
-	// public static async addCar(storeID: string, car: Car) {
-	// 	await MongoController.connect();
+	public static async addCar(storeID: string, car: Car) {
+		await MongoController.connect();
 
-	// 	// TODO: get car id and if not found create new car
+		let carID = await CarModel.getCar(car);
+		if (!carID) carID = await CarModel.createCar(car);
 
-	// 	await this.collection.updateOne(
-	// 		{ _id: storeID },
-	// 		{ $push: { cars: carID } },
-	// 	);
-	// }
+		await this.collection.updateOne(
+			{ _id: storeID },
+			{ $push: { cars: carID } },
+		);
+	}
 
 	public static async getStore(storeID: string) {
 		await MongoController.connect();
 
-		return await this.collection.findById(storeID, {
+		const store = await this.collection.findById(storeID, {
 			__v: 0,
 		});
+
+		store.cars = await CarModel.getCarsByID(store.cars);
+
+		return store;
 	}
 
 	public static async getAllStores() {
@@ -83,6 +88,19 @@ class StoreModel {
 		});
 
 		return userID;
+	}
+
+	public static async removeCar(id: string) {
+		await MongoController.connect();
+
+		await this.collection.updateOne(
+			{},
+			{ $pull: { cars: id } },
+			{ multi: true },
+		);
+
+		const found = await this.collection.findOne({ cars: id });
+		if (!found) await CarModel.deleteCar(id);
 	}
 }
 

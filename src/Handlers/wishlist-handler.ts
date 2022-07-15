@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 
 import ErrorFactory from "../Types/Error";
 import Wishlist from "../Models/Wishlist";
+import CarModel from "../Models/Car";
 
 export const getWishlist = async (
 	req: Request,
@@ -13,9 +14,8 @@ export const getWishlist = async (
 		const wishlist = await Wishlist.getCars(res.locals.userID);
 		if (!wishlist) throw ErrorFactory.notFound("resource not found");
 
-		// TODO: get cars by id (blocked by car model implementation)
-
-		throw ErrorFactory.notImplemented();
+		const cars = await CarModel.getCarsByID(wishlist.cars);
+		res.json(cars);
 	} catch (e) {
 		next(e);
 	}
@@ -29,7 +29,8 @@ export const addCarToWishlist = async (
 	try {
 		const { id: carID } = req.params;
 
-		// TODO: check if car exists (blocked by car model implementation)
+		if (!(await CarModel.getCarByID(carID)))
+			throw ErrorFactory.notFound("resource not found");
 
 		await Wishlist.addCar(res.locals.userID, carID);
 		res.sendStatus(StatusCodes.OK);

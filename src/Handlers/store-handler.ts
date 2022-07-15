@@ -39,8 +39,8 @@ export const updateStoreInfo = async (
 	try {
 		const storeID = req.params.id;
 		const ownerID = await Store.getOwnerID(storeID);
-
 		if (!ownerID) throw ErrorFactory.notFound("resource not found");
+
 		if (ownerID !== res.locals.userID)
 			throw ErrorFactory.forbidden("FORBIDDEN");
 
@@ -51,26 +51,42 @@ export const updateStoreInfo = async (
 	}
 };
 
-// // blocked by car model implementation
-// export const addCarToStore = async (
-// 	req: Request,
-// 	res: Response,
-// 	next: NextFunction,
-// ) => {
-// 	try {
-// 	} catch (e) {
-// 		next(e);
-// 	}
-// };
+export const addCarToStore = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const storeID = req.params.id;
+		const ownerID = await Store.getOwnerID(storeID);
+		if (!ownerID) throw ErrorFactory.notFound("resource not found");
 
-// // blocked by car model implementation
-// export const removeCarFromStore = async (
-// 	req: Request,
-// 	res: Response,
-// 	next: NextFunction,
-// ) => {
-// 	try {
-// 	} catch (e) {
-// 		next(e);
-// 	}
-// };
+		if (ownerID !== res.locals.userID)
+			throw ErrorFactory.forbidden("FORBIDDEN");
+
+		await Store.addCar(storeID, req.body);
+		res.sendStatus(StatusCodes.OK);
+	} catch (e) {
+		next(e);
+	}
+};
+
+export const removeCarFromStore = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const storeID = req.params.id;
+		const ownerID = await Store.getOwnerID(storeID);
+		if (!ownerID) throw ErrorFactory.notFound("resource not found");
+
+		if (ownerID !== res.locals.userID)
+			throw ErrorFactory.forbidden("FORBIDDEN");
+
+		await Store.removeCar(req.body.carID);
+		res.sendStatus(StatusCodes.OK);
+	} catch (e) {
+		next(e);
+	}
+};
