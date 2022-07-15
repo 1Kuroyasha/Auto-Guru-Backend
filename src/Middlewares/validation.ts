@@ -2,8 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import { ObjectSchema } from "joi";
 
 import ErrorFactory from "../Types/Error";
-
-import { checkForMissingParams } from "../Utils/utils";
+import { checkForMissingParams } from "../Utils/general";
 
 export const validate =
 	(schema: ObjectSchema): RequestHandler =>
@@ -19,13 +18,15 @@ export const validate =
 
 export const checkRequiredFields =
 	(requiredParams: string[]) =>
-	async (req: Request, res: Response, next: NextFunction) => {
+	(req: Request, res: Response, next: NextFunction) => {
 		try {
 			const missingParameters = checkForMissingParams(req.body, requiredParams);
+
 			if (missingParameters.length !== 0) {
 				const message = `field(s): [ ${missingParameters} ] are required`;
 				throw ErrorFactory.validationError(message);
 			}
+
 			next();
 		} catch (e) {
 			next(e);

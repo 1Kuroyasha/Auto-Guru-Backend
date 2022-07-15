@@ -2,6 +2,8 @@ import Joi from "joi";
 
 import { storeSchema } from "./store-schemas";
 
+// TODO: Refactor to use reduce code duplication
+
 export const loginSchema = Joi.object({
 	email: Joi.string().email().required(),
 	password: Joi.string().min(6).max(12).required(),
@@ -22,7 +24,6 @@ export const customerSchema = Joi.object({
 	userType: Joi.string().equal("CUSTOMER").required(),
 });
 
-// TODO: not working, storeSchema is not validating
 export const ownerSchema = Joi.object({
 	username: Joi.string().min(4).max(10).required(),
 	password: Joi.string().min(6).max(12).required(),

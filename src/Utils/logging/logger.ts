@@ -1,7 +1,8 @@
+import config from "../../config";
+
 import winston from "winston";
 
-import config from "../../config";
-import consoleTransport from "./consoleTransport";
+import consoleTransport from "./console-transport";
 
 export default winston.createLogger({
 	exitOnError: false,

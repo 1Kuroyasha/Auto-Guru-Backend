@@ -12,9 +12,9 @@ export const login = async (
 	res: Response,
 	next: NextFunction,
 ) => {
-	const { email, password } = req.body;
-
 	try {
+		const { email, password } = req.body;
+
 		const user = await User.findUserByEmail(email);
 		if (!user) throw ErrorFactory.unauthorized("Invalid email");
 
@@ -24,7 +24,6 @@ export const login = async (
 		if (!isMatch) throw ErrorFactory.unauthorized("Invalid password");
 
 		const token = await signUser(id);
-
 		res.json({ token: `Bearer ${token}` });
 	} catch (e) {
 		next(e);
@@ -39,7 +38,6 @@ export const getUser = async (
 	try {
 		const user = await User.getUserById(req.params.id);
 		if (!user) throw ErrorFactory.notFound("resource not found");
-
 		res.json(user);
 	} catch (e) {
 		next(e);
@@ -52,18 +50,14 @@ export const updateUser = async (
 	next: NextFunction,
 ) => {
 	try {
-		const id = req.params.id;
 		const user = req.body;
 
-		if (user.userType) {
+		if (user.userType)
 			throw ErrorFactory.badRequest("user type cannot be updated");
-		}
 
-		if (user.password) {
-			user.password = await hashPassword(user.password);
-		}
+		if (user.password) user.password = await hashPassword(user.password);
 
-		await User.updateUser(id, user);
+		await User.updateUser(req.params.id, user);
 		res.sendStatus(StatusCodes.OK);
 	} catch (e) {
 		next(e);
@@ -76,9 +70,8 @@ export const checkEmailAvailability = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { email } = req.body;
-		const found = await User.findUserByEmail(email);
-		if (!found) return next();
+		const found = await User.findUserByEmail(req.body.email);
+		if (!found) return next(); // if user not found, then email is available
 
 		throw ErrorFactory.validationError("email is already registered");
 	} catch (e) {
@@ -101,8 +94,6 @@ export const register = async (
 		});
 
 		const token = await signUser(id);
-		if (!token) throw ErrorFactory.internalServerError("Invalid jwt secret");
-
 		res.json({ token: `Bearer ${token}` });
 	} catch (e) {
 		next(e);
@@ -116,11 +107,10 @@ export const validateUser = async (
 ) => {
 	try {
 		const userType = req.body.userType;
-		if (userType === "CUSTOMER") {
-			await customerSchema.validateAsync(req.body);
-		} else if (userType === "OWNER") {
-			await ownerSchema.validateAsync(req.body);
-		} else throw ErrorFactory.validationError("user type is invalid");
+
+		if (userType === "CUSTOMER") await customerSchema.validateAsync(req.body);
+		else if (userType === "OWNER") await ownerSchema.validateAsync(req.body);
+		else throw ErrorFactory.validationError("user type is invalid");
 
 		next();
 	} catch (e) {

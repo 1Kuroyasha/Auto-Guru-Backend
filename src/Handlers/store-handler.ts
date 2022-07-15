@@ -23,11 +23,8 @@ export const getStore = async (
 	next: NextFunction,
 ) => {
 	try {
-		const storeID = req.params.id;
-
-		const store = await Store.getStore(storeID);
+		const store = await Store.getStore(req.params.id);
 		if (!store) throw ErrorFactory.notFound("resource not found");
-
 		res.json(store);
 	} catch (e) {
 		next(e);
@@ -47,9 +44,7 @@ export const updateStoreInfo = async (
 		if (ownerID !== res.locals.userID)
 			throw ErrorFactory.forbidden("FORBIDDEN");
 
-		const storeInfo = req.body;
-		await Store.updateStoreInfo(storeID, storeInfo);
-
+		await Store.updateStoreInfo(storeID, req.body);
 		res.sendStatus(StatusCodes.OK);
 	} catch (e) {
 		next(e);

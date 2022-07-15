@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-import connect from "../Controllers/mongo-controller";
+import MongoController from "../Controllers/mongo-controller";
 import ErrorFactory from "../Types/Error";
 import logger from "../Utils/logging/logger";
 
@@ -26,7 +26,8 @@ class Wishlist {
 	private static collection = model("Wishlist", wishlistSchema);
 
 	public static async create(userID: string) {
-		await connect();
+		await MongoController.connect();
+
 		await Wishlist.collection.create({
 			userID,
 			cars: [],
@@ -35,7 +36,7 @@ class Wishlist {
 	}
 
 	public static async addCar(userID: string, carID: string) {
-		await connect();
+		await MongoController.connect();
 
 		const wishlist = await Wishlist.collection.findOne({ userID });
 		if (wishlist && wishlist.cars.includes(carID)) {
@@ -47,13 +48,15 @@ class Wishlist {
 	}
 
 	public static async removeCar(userID: string, carID: string) {
-		await connect();
+		await MongoController.connect();
+
 		await Wishlist.collection.updateOne({ userID }, { $pull: { cars: carID } });
 		logger.debug("Car removed from the wishlist");
 	}
 
 	public static async getCars(userID: string) {
-		await connect();
+		await MongoController.connect();
+
 		const wishlist = await Wishlist.collection.findOne({ userID });
 		return wishlist.cars;
 	}

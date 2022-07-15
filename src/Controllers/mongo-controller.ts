@@ -3,26 +3,21 @@ import config from "../config";
 import mongoose, { Mongoose } from "mongoose";
 
 import logger from "../Utils/logging/logger";
-import ErrorFactory from "../Types/Error";
 
-let connection: Mongoose;
+class MongoController {
+	private static connection: Mongoose;
 
-const connect = async (): Promise<Mongoose> => {
-	if (connection) return connection;
+	public static async connect() {
+		if (!this.connection) {
+			logger.info("Connecting to database server");
 
-	try {
-		logger.info("Connecting to database server");
-		const client = await mongoose.connect(config.DATABASE, {
-			autoIndex: false,
-		});
-		logger.info("Connected to database server");
+			this.connection = await mongoose.connect(config.DATABASE, {
+				autoIndex: false,
+			});
 
-		connection = client;
-		return connection;
-	} catch (e) {
-		const err = e as Error;
-		throw ErrorFactory.internalServerError(err.message);
+			logger.info("Connected to database server");
+		}
 	}
-};
+}
 
-export default connect;
+export default MongoController;

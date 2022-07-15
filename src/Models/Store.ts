@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-import connect from "../Controllers/mongo-controller";
+import MongoController from "../Controllers/mongo-controller";
 import { Store } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
 
@@ -24,7 +24,8 @@ class StoreModel {
 	private static collection = model("Store", storeSchema);
 
 	public static async createStore(ownerID: string, store: Store) {
-		await connect();
+		await MongoController.connect();
+
 		await this.collection.create({
 			ownerID,
 			...store,
@@ -35,7 +36,7 @@ class StoreModel {
 
 	// // (blocked by car model implementation)
 	// public static async addCar(storeID: string, car: Car) {
-	// 	await connect();
+	// 	await MongoController.connect();
 
 	// 	// TODO: get car id and if not found create new car
 
@@ -46,14 +47,16 @@ class StoreModel {
 	// }
 
 	public static async getStore(storeID: string) {
-		await connect();
+		await MongoController.connect();
+
 		return await this.collection.findById(storeID, {
 			__v: 0,
 		});
 	}
 
 	public static async getAllStores() {
-		await connect();
+		await MongoController.connect();
+
 		return await this.collection.find(
 			{},
 			{
@@ -67,12 +70,13 @@ class StoreModel {
 		storeID: string,
 		storeInfo: Partial<Store>,
 	) {
-		await connect();
+		await MongoController.connect();
+
 		return await this.collection.findByIdAndUpdate(storeID, storeInfo);
 	}
 
 	public static async getOwnerID(id: string) {
-		await connect();
+		await MongoController.connect();
 
 		const { ownerID: userID } = await this.collection.findById(id, {
 			ownerID: 1,

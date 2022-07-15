@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
+
 import User from "../Models/User";
 import ErrorFactory from "../Types/Error";
-
 import { UserType } from "../Types/types";
 import { getIdFromJwt } from "../Utils/jwt";
 
@@ -14,14 +14,15 @@ export const authentication = async (
 		if (!req.headers.authorization)
 			throw ErrorFactory.badRequest("No access token");
 
-		const match = req.headers.authorization.match(/^Bearer (.+)/);
-		const token = !match ? null : match[1];
-		if (!token) throw ErrorFactory.unauthorized("Invalid access token");
+		if (!/^Bearer (.+)/.test(req.headers.authorization))
+			throw ErrorFactory.unauthorized("Invalid access token");
 
+		const token = req.headers.authorization.replace("Bearer ", "");
 		const id = await getIdFromJwt(token);
-		if (!id) throw ErrorFactory.unauthorized("Invalid access token");
-		res.locals.userID = id;
 
+		if (!id) throw ErrorFactory.unauthorized("Invalid access token");
+
+		res.locals.userID = id;
 		next();
 	} catch (e) {
 		next(e);
@@ -32,10 +33,8 @@ export const authorization = (requiredType?: UserType) =>
 	!requiredType
 		? async (req: Request, res: Response, next: NextFunction) => {
 				try {
-					const id = res.locals.userID as string;
-					const resourceID = req.params.id;
-
-					if (id !== resourceID) throw ErrorFactory.forbidden("FORBIDDEN");
+					if (res.locals.userID !== req.params.id)
+						throw ErrorFactory.forbidden("FORBIDDEN");
 
 					next();
 				} catch (e) {
@@ -44,8 +43,7 @@ export const authorization = (requiredType?: UserType) =>
 		  }
 		: async (req: Request, res: Response, next: NextFunction) => {
 				try {
-					const id = res.locals.userID as string;
-					const userType = await User.getUserTypeById(id);
+					const userType = await User.getUserTypeById(res.locals.userID);
 
 					if (userType !== requiredType)
 						throw ErrorFactory.forbidden("FORBIDDEN");

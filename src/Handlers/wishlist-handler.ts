@@ -15,7 +15,7 @@ export const getWishlist = async (
 
 		// TODO: get cars by id (blocked by car model implementation)
 
-		res.json(wishlist);
+		throw ErrorFactory.notImplemented();
 	} catch (e) {
 		next(e);
 	}
@@ -44,9 +44,7 @@ export const removeCarFromWishlist = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { id: carID } = req.params;
-
-		await Wishlist.removeCar(res.locals.userID, carID);
+		await Wishlist.removeCar(res.locals.userID, req.params.id);
 		res.sendStatus(StatusCodes.OK);
 	} catch (e) {
 		next(e);

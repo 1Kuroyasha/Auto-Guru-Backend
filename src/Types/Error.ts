@@ -53,4 +53,12 @@ export default class ErrorFactory {
 	public static notFound(message = "Not found") {
 		return new CustomError(message, StatusCodes.NOT_FOUND, "NOT_FOUND");
 	}
+
+	public static notImplemented(message = "Not implemented") {
+		return new CustomError(
+			message,
+			StatusCodes.NOT_IMPLEMENTED,
+			"NOT_IMPLEMENTED",
+		);
+	}
 }

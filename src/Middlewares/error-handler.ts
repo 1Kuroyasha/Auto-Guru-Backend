@@ -26,6 +26,8 @@ export const errorLogger = (
 		logger.error(err.message);
 	}
 
+	// TODO: log error to log file (blocked by file transport implementation)
+
 	next(err);
 };
 
