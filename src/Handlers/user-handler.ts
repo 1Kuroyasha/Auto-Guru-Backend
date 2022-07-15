@@ -5,6 +5,7 @@ import ErrorFactory from "../Types/Error";
 import User from "../Models/User";
 import { hashPassword, comparePasswords } from "../Utils/bcrypt";
 import { signUser } from "../Utils/jwt";
+import Wishlist from "../Models/Wishlist";
 
 export const login = async (
 	req: Request,
@@ -54,27 +55,16 @@ export const updateUser = async (
 		const id = req.params.id;
 		const user = req.body;
 
+		if (user.userType) {
+			throw ErrorFactory.badRequest("user type cannot be updated");
+		}
+
 		if (user.password) {
 			user.password = await hashPassword(user.password);
 		}
 
 		await User.updateUser(id, user);
 		res.sendStatus(StatusCodes.OK);
-	} catch (e) {
-		next(e);
-	}
-};
-
-export const getAllOwners = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	try {
-		const owners = await User.getOwners();
-		if (!owners) throw ErrorFactory.notFound("resource not found");
-
-		res.json(owners);
 	} catch (e) {
 		next(e);
 	}
@@ -124,6 +114,55 @@ export const register = async (
 		if (!token) throw ErrorFactory.internalServerError("Invalid jwt secret");
 
 		res.status(StatusCodes.CREATED).json({ token: `Bearer ${token}` });
+	} catch (e) {
+		next(e);
+	}
+};
+
+export const getWishlist = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const wishlist = await Wishlist.getCars(res.locals.userID);
+		if (!wishlist) throw ErrorFactory.notFound("resource not found");
+
+		// TODO: get cars by id
+
+		res.json(wishlist);
+	} catch (e) {
+		next(e);
+	}
+};
+
+export const addCarToWishlist = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { id: carID } = req.params;
+
+		// TODO: check if car exists
+
+		await Wishlist.addCar(res.locals.userID, carID);
+		res.sendStatus(StatusCodes.OK);
+	} catch (e) {
+		next(e);
+	}
+};
+
+export const removeCarFromWishlist = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { id: carID } = req.params;
+
+		await Wishlist.removeCar(res.locals.userID, carID);
+		res.sendStatus(StatusCodes.OK);
 	} catch (e) {
 		next(e);
 	}

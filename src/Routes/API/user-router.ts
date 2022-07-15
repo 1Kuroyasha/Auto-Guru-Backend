@@ -7,39 +7,37 @@ import {
 	registerSchema,
 } from "../../Utils/validation/user-schemas";
 import {
-	getAllOwners,
 	getUser,
 	updateUser,
 	login,
 	register,
 	checkEmailAvailability,
+	getWishlist,
+	addCarToWishlist,
+	removeCarFromWishlist,
 } from "../../Handlers/user-handler";
 
 const router = Router();
 
-router.route("/login").post(validate(loginSchema), login);
+router.post("/login", validate(loginSchema), login);
 
 router.post(
 	"/register",
-	checkRequiredFields([
-		"username",
-		"password",
-		"name",
-		"phone",
-		"email",
-		"age",
-		"userType",
-	]),
+	checkRequiredFields(["email"]),
 	checkEmailAvailability,
 	validate(registerSchema),
 	register,
 );
 
-router.get("/user/:id", authentication, authorization(), getUser);
-
 router
-	.route("/user")
+	.route("/user/:id")
 	.put(authentication, authorization(), updateUser)
-	.get(authentication, authorization("OWNER"), getAllOwners);
+	.get(authentication, authorization(), getUser);
+
+router.get("/wishlist", authentication, authorization("CUSTOMER"), getWishlist);
+router
+	.route("/wishlist/:id")
+	.post(authentication, authorization("CUSTOMER"), addCarToWishlist)
+	.delete(authentication, authorization("CUSTOMER"), removeCarFromWishlist);
 
 export default router;

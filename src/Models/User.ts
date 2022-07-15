@@ -4,6 +4,7 @@ import connect from "../Controllers/mongo-controller";
 import { Customer, Owner, UserInfo, UserInterface } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
 import ErrorFactory from "../Types/Error";
+import Wishlist from "./Wishlist";
 
 const userSchema = new Schema(
 	{
@@ -51,10 +52,16 @@ class User {
 
 	public static async create(user: Customer | Owner): Promise<string> {
 		await connect();
-		const newUser = await User.collection.create(user);
+		const { _id: id } = await User.collection.create(user);
+
+		if (user.userType === "CUSTOMER") {
+			Wishlist.create(id);
+		}
+		// TODO: add store for owner
+
 		logger.debug("New customer added to the database");
 
-		return newUser._id;
+		return id;
 	}
 
 	public static async findUserByEmail(email: string): Promise<UserInfo | null> {
@@ -96,13 +103,7 @@ class User {
 
 	public static async updateUser(id: string, user: Partial<UserInterface>) {
 		await User.collection.findByIdAndUpdate(id, user);
-	}
-
-	public static async getOwners(): Promise<Array<UserInterface>> {
-		return await User.collection.find(
-			{ userType: "OWNER" },
-			{ _id: 0, password: 0, __v: 0 },
-		);
+		logger.debug("User updated");
 	}
 }
 
