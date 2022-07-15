@@ -12,9 +12,6 @@ import {
 	login,
 	register,
 	checkEmailAvailability,
-	getWishlist,
-	addCarToWishlist,
-	removeCarFromWishlist,
 } from "../../Handlers/user-handler";
 
 const router = Router();
@@ -33,11 +30,5 @@ router
 	.route("/user/:id")
 	.put(authentication, authorization(), updateUser)
 	.get(authentication, authorization(), getUser);
-
-router.get("/wishlist", authentication, authorization("CUSTOMER"), getWishlist);
-router
-	.route("/wishlist/:id")
-	.post(authentication, authorization("CUSTOMER"), addCarToWishlist)
-	.delete(authentication, authorization("CUSTOMER"), removeCarFromWishlist);
 
 export default router;

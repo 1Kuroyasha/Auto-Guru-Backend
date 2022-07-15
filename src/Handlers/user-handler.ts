@@ -5,7 +5,6 @@ import ErrorFactory from "../Types/Error";
 import User from "../Models/User";
 import { hashPassword, comparePasswords } from "../Utils/bcrypt";
 import { signUser } from "../Utils/jwt";
-import Wishlist from "../Models/Wishlist";
 
 export const login = async (
 	req: Request,
@@ -114,55 +113,6 @@ export const register = async (
 		if (!token) throw ErrorFactory.internalServerError("Invalid jwt secret");
 
 		res.status(StatusCodes.CREATED).json({ token: `Bearer ${token}` });
-	} catch (e) {
-		next(e);
-	}
-};
-
-export const getWishlist = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	try {
-		const wishlist = await Wishlist.getCars(res.locals.userID);
-		if (!wishlist) throw ErrorFactory.notFound("resource not found");
-
-		// TODO: get cars by id
-
-		res.json(wishlist);
-	} catch (e) {
-		next(e);
-	}
-};
-
-export const addCarToWishlist = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	try {
-		const { id: carID } = req.params;
-
-		// TODO: check if car exists
-
-		await Wishlist.addCar(res.locals.userID, carID);
-		res.sendStatus(StatusCodes.OK);
-	} catch (e) {
-		next(e);
-	}
-};
-
-export const removeCarFromWishlist = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	try {
-		const { id: carID } = req.params;
-
-		await Wishlist.removeCar(res.locals.userID, carID);
-		res.sendStatus(StatusCodes.OK);
 	} catch (e) {
 		next(e);
 	}
