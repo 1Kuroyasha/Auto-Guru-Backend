@@ -22,33 +22,35 @@ export class CustomError extends Error {
 }
 
 export default class ErrorFactory {
-	constructor(message: string, type: CustomErrors = "INTERNAL_SERVER_ERROR") {
-		let status = null;
+	public static internalServerError(message = "Internal server error") {
+		return new CustomError(
+			message,
+			StatusCodes.INTERNAL_SERVER_ERROR,
+			"INTERNAL_SERVER_ERROR",
+		);
+	}
 
-		switch (type) {
-			case "INTERNAL_SERVER_ERROR":
-				status = StatusCodes.INTERNAL_SERVER_ERROR;
-				break;
-			case "VALIDATION_ERROR":
-				status = StatusCodes.BAD_REQUEST;
-				break;
-			case "BAD_REQUEST":
-				status = StatusCodes.BAD_REQUEST;
-				break;
-			case "UNAUTHORIZED":
-				status = StatusCodes.UNAUTHORIZED;
-				break;
-			case "FORBIDDEN":
-				status = StatusCodes.FORBIDDEN;
-				break;
-			case "NOT_FOUND":
-				status = StatusCodes.NOT_FOUND;
-				break;
-			default:
-				status = StatusCodes.INTERNAL_SERVER_ERROR;
-				break;
-		}
+	public static validationError(message = "Validation error") {
+		return new CustomError(
+			message,
+			StatusCodes.BAD_REQUEST,
+			"VALIDATION_ERROR",
+		);
+	}
 
-		return new CustomError(message, status, type);
+	public static badRequest(message = "Bad request") {
+		return new CustomError(message, StatusCodes.BAD_REQUEST, "BAD_REQUEST");
+	}
+
+	public static unauthorized(message = "Unauthorized") {
+		return new CustomError(message, StatusCodes.UNAUTHORIZED, "UNAUTHORIZED");
+	}
+
+	public static forbidden(message = "Forbidden") {
+		return new CustomError(message, StatusCodes.FORBIDDEN, "FORBIDDEN");
+	}
+
+	public static notFound(message = "Not found") {
+		return new CustomError(message, StatusCodes.NOT_FOUND, "NOT_FOUND");
 	}
 }

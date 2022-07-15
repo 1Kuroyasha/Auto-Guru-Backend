@@ -5,30 +5,53 @@ import ErrorFactory from "../Types/Error";
 import { UserType } from "../Types/types";
 import { getIdFromJwt } from "../Utils/jwt";
 
-const auth =
-	(requiredType?: UserType) =>
-	async (req: Request, res: Response, next: NextFunction) => {
-		try {
-			if (!req.headers.authorization)
-				throw new ErrorFactory("No access token", "BAD_REQUEST");
+export const authentication = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		if (!req.headers.authorization)
+			throw ErrorFactory.badRequest("No access token");
 
-			const match = req.headers.authorization.match(/^Bearer (.+)/);
-			const token = !match ? null : match[1];
-			if (!token)
-				throw new ErrorFactory("Invalid access token", "UNAUTHORIZED");
+		const match = req.headers.authorization.match(/^Bearer (.+)/);
+		const token = !match ? null : match[1];
+		if (!token) throw ErrorFactory.unauthorized("Invalid access token");
 
-			const id = await getIdFromJwt(token);
-			if (!id) throw new ErrorFactory("Invalid access token", "UNAUTHORIZED");
+		const id = await getIdFromJwt(token);
+		if (!id) throw ErrorFactory.unauthorized("Invalid access token");
+		res.locals.userID = id;
 
-			const userType = await User.getUserTypeById(id);
+		next();
+	} catch (e) {
+		next(e);
+	}
+};
 
-			if (userType !== requiredType && requiredType)
-				throw new ErrorFactory("FORBIDDEN", "FORBIDDEN");
+export const authorization = (requiredType?: UserType) =>
+	!requiredType
+		? async (req: Request, res: Response, next: NextFunction) => {
+				try {
+					const id = res.locals.userID as string;
+					const resourceID = req.params.id;
 
-			next();
-		} catch (e) {
-			next(e);
-		}
-	};
+					if (id !== resourceID) throw ErrorFactory.forbidden("FORBIDDEN");
 
-export default auth;
+					next();
+				} catch (e) {
+					next(e);
+				}
+		  }
+		: async (req: Request, res: Response, next: NextFunction) => {
+				try {
+					const id = res.locals.userID as string;
+					const userType = await User.getUserTypeById(id);
+
+					if (userType !== requiredType)
+						throw ErrorFactory.forbidden("FORBIDDEN");
+
+					next();
+				} catch (e) {
+					next(e);
+				}
+		  };

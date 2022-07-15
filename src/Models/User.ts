@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 import connect from "../Controllers/mongo-controller";
-import { Customer, Owner, UserInfo } from "../Types/interfaces";
+import { Customer, Owner, UserInfo, UserInterface } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
 import ErrorFactory from "../Types/Error";
 
@@ -77,10 +77,32 @@ class User {
 		const match = await User.collection.findById(id, { userType: 1 });
 
 		if (!match) {
-			throw new ErrorFactory("invalid access token", "VALIDATION_ERROR");
+			throw ErrorFactory.badRequest("invalid access token");
 		}
 
 		return match.userType;
+	}
+
+	public static async getUserById(id: string): Promise<UserInfo | null> {
+		await connect();
+		const match = await User.collection.findById(id, {
+			_id: 0,
+			password: 0,
+			__v: 0,
+		});
+
+		return match;
+	}
+
+	public static async updateUser(id: string, user: Partial<UserInterface>) {
+		await User.collection.findByIdAndUpdate(id, user);
+	}
+
+	public static async getOwners(): Promise<Array<UserInterface>> {
+		return await User.collection.find(
+			{ userType: "OWNER" },
+			{ _id: 0, password: 0, __v: 0 },
+		);
 	}
 }
 

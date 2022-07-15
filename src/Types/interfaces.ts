@@ -17,7 +17,7 @@ export interface Store {
 	cars: Array<Car>;
 }
 
-export interface User {
+export interface UserInterface {
 	id?: string;
 	username: string;
 	password: string;
@@ -28,11 +28,11 @@ export interface User {
 	userType: UserType;
 }
 
-export interface Customer extends User {
+export interface Customer extends UserInterface {
 	salary?: number;
 }
 
-export interface Owner extends User {
+export interface Owner extends UserInterface {
 	store?: Store;
 }
 

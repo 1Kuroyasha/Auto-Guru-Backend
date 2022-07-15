@@ -13,7 +13,7 @@ export const errorAdapter = (
 ) => {
 	if (err instanceof CustomError) return next(err);
 
-	next(new ErrorFactory(err.message));
+	next(ErrorFactory.internalServerError(err.message));
 };
 
 export const errorLogger = (

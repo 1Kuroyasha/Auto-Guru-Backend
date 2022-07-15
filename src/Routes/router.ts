@@ -9,9 +9,8 @@ Object.values(routers).forEach(router => {
 	mainRouter.use(router);
 });
 
-mainRouter.get("*", (req: Request, res: Response, next: NextFunction) => {
-	const err = new ErrorFactory("resource not found", "NOT_FOUND");
-	next(err);
-});
+mainRouter.get("*", (req: Request, res: Response, next: NextFunction) =>
+	next(ErrorFactory.notFound("route not found")),
+);
 
 export default mainRouter;

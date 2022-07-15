@@ -21,7 +21,7 @@ const connect = async (): Promise<Mongoose> => {
 		return connection;
 	} catch (e) {
 		const err = e as Error;
-		throw new ErrorFactory(err.message, "INTERNAL_SERVER_ERROR");
+		throw ErrorFactory.internalServerError(err.message);
 	}
 };
 
