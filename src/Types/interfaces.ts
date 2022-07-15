@@ -1,20 +1,24 @@
-import { UserType } from "./types";
+import { CarBodyType, Transmission, UserType, CarID, userID } from "./types";
 
 export interface Car {
 	make: string;
 	model: string;
-	bodyType: string;
+	bodyType: CarBodyType;
 	engineCapacity: number;
 	productionYear: number;
+	numberOfDoors: number;
+	transmission: Transmission;
+	price: number;
 	availableColors: Array<string>;
 }
 
 export interface Store {
+	owner: userID;
 	email: string;
 	phone: string;
 	address: string;
 	website: string;
-	cars: Array<Car>;
+	cars: Array<CarID>;
 }
 
 export interface UserInterface {
@@ -30,10 +34,11 @@ export interface UserInterface {
 
 export interface Customer extends UserInterface {
 	salary?: number;
+	wishlist: Array<CarID>;
 }
 
 export interface Owner extends UserInterface {
-	store?: Store;
+	store?: string;
 }
 
 export interface Credentials {
