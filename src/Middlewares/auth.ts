@@ -19,8 +19,7 @@ export const authentication = async (
 
 		const token = req.headers.authorization.replace("Bearer ", "");
 		const id = await getIdFromJwt(token);
-
-		if (!id) throw ErrorFactory.unauthorized("Invalid access token");
+		if (!id) throw ErrorFactory.badRequest("Invalid access token");
 
 		res.locals.userID = id;
 		next();

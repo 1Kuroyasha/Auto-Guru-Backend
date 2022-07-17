@@ -8,7 +8,6 @@ export interface Car {
 	productionYear: number;
 	numberOfDoors: number;
 	transmission: Transmission;
-	price: number;
 }
 
 export interface Store {
@@ -18,7 +17,11 @@ export interface Store {
 	phone: string;
 	address: string;
 	website: string;
-	cars?: Array<CarID>;
+	cars?: Array<{
+		carID: CarID;
+		numberAvailable: number;
+		price: number;
+	}>;
 }
 
 export interface UserInterface {

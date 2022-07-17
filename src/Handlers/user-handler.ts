@@ -24,6 +24,8 @@ export const login = async (
 		if (!isMatch) throw ErrorFactory.unauthorized("Invalid password");
 
 		const token = await signUser(id);
+		if (!token) throw ErrorFactory.internalServerError("invalid jwt token");
+
 		res.json({ token: `Bearer ${token}` });
 	} catch (e) {
 		next(e);
@@ -94,6 +96,8 @@ export const register = async (
 		});
 
 		const token = await signUser(id);
+		if (!token) throw ErrorFactory.internalServerError("invalid jwt token");
+
 		res.json({ token: `Bearer ${token}` });
 	} catch (e) {
 		next(e);

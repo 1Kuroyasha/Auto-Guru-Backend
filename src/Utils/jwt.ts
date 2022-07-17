@@ -2,24 +2,23 @@ import config from "../config";
 
 import jwt from "jsonwebtoken";
 
-import ErrorFactory from "../Types/Error";
-
 export const signUser = (id: string) =>
 	new Promise(resolve => {
-		jwt.sign({ id }, config.JWT_SECRET, {}, (err, token) => {
-			if (err) throw new Error("invalid jwt");
-			resolve(token);
-		});
+		try {
+			jwt.sign({ id }, config.JWT_SECRET, {}, (_, token) => resolve(token));
+		} catch (e) {
+			resolve(null);
+		}
 	});
 
-export const getIdFromJwt = (token: string): Promise<string> =>
+export const getIdFromJwt = (token: string): Promise<string | null> =>
 	new Promise(resolve => {
-		jwt.verify(token, config.JWT_SECRET, async (err, jwtPayload) => {
-			if (err) throw ErrorFactory.badRequest("invalid jwt");
-
-			const { id } = jwtPayload as jwt.JwtPayload;
-			if (!id) throw ErrorFactory.badRequest("invalid jwt");
-
-			resolve(id);
+		jwt.verify(token, config.JWT_SECRET, async (_, jwtPayload) => {
+			try {
+				const { id } = jwtPayload as jwt.JwtPayload;
+				resolve(id);
+			} catch (e) {
+				resolve(null);
+			}
 		});
 	});

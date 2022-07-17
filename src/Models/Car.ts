@@ -5,6 +5,7 @@ import ErrorFactory from "../Types/Error";
 import { Car } from "../Types/interfaces";
 import logger from "../Utils/logging/logger";
 import { carSchema } from "../Utils/validation/car-schemas";
+import StoreModel from "./Store";
 
 const schema = new Schema(
 	{
@@ -15,7 +16,7 @@ const schema = new Schema(
 		engineCapacity: "number",
 		productionYear: "number",
 		numberOfDoors: "number",
-		price: "number",
+		sold: "number",
 	},
 	{
 		strict: true,
@@ -36,7 +37,7 @@ class CarModel {
 
 		await MongoController.connect();
 
-		const { _id: id } = await this.collection.create(car);
+		const { _id: id } = await this.collection.create({ sold: 0, ...car });
 		logger.debug("New car added to the database");
 
 		return id;
@@ -52,7 +53,10 @@ class CarModel {
 	public static async getCarByID(id: string) {
 		await MongoController.connect();
 
-		return await this.collection.findById(id, { __v: 0 });
+		const car = await this.collection.findById(id, { __v: 0 });
+		car.stores = await StoreModel.getStoresByCarID(id);
+
+		return car;
 	}
 
 	public static async getAllCars() {
@@ -69,30 +73,34 @@ class CarModel {
 		);
 	}
 
-	public static async getCar(car: Partial<Car>): Promise<string> {
+	public static async getCar(car: Partial<Car>): Promise<string | null> {
 		await MongoController.connect();
 
-		const found = await this.collection.findOne({ car }, { _id: 1 });
+		const found = await this.collection.findOne(car, { _id: 1 });
 		return found?.id;
 	}
 
 	public static async getCarsByID(ids: string[]) {
 		await MongoController.connect();
 
-		const result: Partial<Car>[] = [];
-
-		ids.forEach(async id => {
-			const car = await this.collection.findById(id, {
-				_id: 1,
-				make: 1,
-				model: 1,
-				price: 1,
-			});
-
-			result.push(car);
-		});
+		const result = await Promise.all(
+			ids.map(async id => {
+				const car = await this.collection.findById(id, {
+					_id: 1,
+					make: 1,
+					model: 1,
+				});
+				return car;
+			}),
+		);
 
 		return result;
+	}
+
+	public static async sell(id: string) {
+		await MongoController.connect();
+
+		await this.collection.updateOne({ _id: id }, { $inc: { sold: 1 } });
 	}
 }
 

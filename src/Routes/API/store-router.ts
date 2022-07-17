@@ -11,12 +11,19 @@ import {
 
 const router = Router();
 
-router.get("/store", getAllStores);
+router.get("/store/:storeID", getStore);
+
 router
-	.route("/store/:id")
-	.get(getStore)
+	.route("/store")
+	.get(getAllStores)
 	.put(authentication, authorization("OWNER"), updateStoreInfo)
-	.post(authentication, authorization("OWNER"), addCarToStore)
-	.delete(authentication, authorization("OWNER"), removeCarFromStore);
+	.post(authentication, authorization("OWNER"), addCarToStore);
+
+router.delete(
+	"/store/:carID",
+	authentication,
+	authorization("OWNER"),
+	removeCarFromStore,
+);
 
 export default router;
