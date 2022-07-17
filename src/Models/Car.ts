@@ -37,7 +37,9 @@ class CarModel {
 
 		await MongoController.connect();
 
-		const { _id: id } = await this.collection.create({ sold: 0, ...car });
+		const { _id: id } = (
+			await this.collection.create({ sold: 0, ...car })
+		).toObject();
 		logger.debug("New car added to the database");
 
 		return id;
@@ -53,7 +55,10 @@ class CarModel {
 	public static async getCarByID(id: string) {
 		await MongoController.connect();
 
-		const car = await this.collection.findById(id, { __v: 0 });
+		const car = (
+			await this.collection.findById(id, { __v: 0, sold: 0 })
+		).toObject();
+
 		car.stores = await StoreModel.getStoresByCarID(id);
 
 		return car;

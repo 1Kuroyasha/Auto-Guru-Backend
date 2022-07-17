@@ -4,6 +4,7 @@ import MongoController from "../Controllers/mongo-controller";
 import ErrorFactory from "../Types/Error";
 import { Store } from "../Types/interfaces";
 import { CarBodyType, Transmission } from "../Types/types";
+import { includes, indexOf } from "../Utils/general";
 import logger from "../Utils/logging/logger";
 import CarModel from "./Car";
 
@@ -134,16 +135,6 @@ class StoreModel {
 		await this.collection.findByIdAndUpdate({ ownerID }, storeInfo);
 	}
 
-	public static async getOwnerID(id: string) {
-		await MongoController.connect();
-
-		const { ownerID: userID } = await this.collection.findById(id, {
-			ownerID: 1,
-		});
-
-		return userID;
-	}
-
 	public static async removeCar(ownerID: string, carID: string) {
 		await MongoController.connect();
 
@@ -218,11 +209,16 @@ class StoreModel {
 
 		const stores = await this.collection.find({}, { _id: 1, name: 1, cars: 1 });
 
-		const result: Array<{ id: string; name: string }> = [];
+		const result: Array<{ id: string; name: string; price: number }> = [];
 
 		stores.forEach(store => {
-			if (store.cars.includes(carID))
-				result.push({ id: store._id, name: store.name });
+			if (includes(store.cars, { carID })) {
+				result.push({
+					id: store._id,
+					name: store.name,
+					price: store.cars[indexOf(store.cars, { carID })].price,
+				});
+			}
 		});
 
 		return result;
