@@ -14,9 +14,7 @@ export const customerSchema = Joi.object({
 	password: Joi.string().min(6).max(12).required(),
 	name: Joi.string().required(),
 
-	phone: Joi.string()
-		.pattern(/0[0125]\d{9}/)
-		.required(),
+	phone: Joi.string().required(),
 
 	email: Joi.string().email().required(),
 	age: Joi.number().min(16).max(116).required(),
@@ -25,16 +23,12 @@ export const customerSchema = Joi.object({
 });
 
 export const ownerSchema = Joi.object({
-	username: Joi.string().min(4).max(10).required(),
 	password: Joi.string().min(6).max(12).required(),
 	name: Joi.string().required(),
 
-	phone: Joi.string()
-		.pattern(/0[0125]\d{9}/)
-		.required(),
+	phone: Joi.string().required(),
 
 	email: Joi.string().email().required(),
-	age: Joi.number().min(16).max(116).required(),
 	userType: Joi.string().equal("OWNER").required(),
 	store: storeSchema.required(),
 });

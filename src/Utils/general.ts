@@ -54,3 +54,29 @@ export const indexOf = (
 
 	return index;
 };
+
+export const getToday = (): string => {
+	const date = new Date();
+	const dd = String(date.getDate());
+	const mm = String(date.getMonth() + 1);
+	const yyyy = date.getFullYear();
+
+	return `${mm}/${dd}/${yyyy}`;
+};
+
+export const getRange = (arr: Date[]) => {
+	const sorted = arr.sort((a, b) => (a > b ? 1 : -1));
+
+	const maximum = sorted[sorted.length - 1];
+
+	const minimum = sorted[0];
+
+	return getDifferenceInMonths(maximum.getTime() - minimum.getTime());
+};
+
+const getDifferenceInMonths = (diff: number): number => {
+	const temp = diff / (1000 * 3600 * 24);
+	const months = Math.floor(temp / 30);
+
+	return months;
+};

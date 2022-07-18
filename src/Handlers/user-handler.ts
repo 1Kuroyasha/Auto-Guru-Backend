@@ -6,6 +6,8 @@ import User from "../Models/User";
 import { hashPassword, comparePasswords } from "../Utils/bcrypt";
 import { signUser } from "../Utils/jwt";
 import { customerSchema, ownerSchema } from "../Utils/validation/user-schemas";
+import { getForecasts } from "../Services/forecasting";
+import Store from "../Models/Store";
 
 export const login = async (
 	req: Request,
@@ -122,6 +124,23 @@ export const validateUser = async (
 		if (err.name === "ValidationError")
 			return next(ErrorFactory.validationError(err.message));
 
+		next(e);
+	}
+};
+
+export const getForecast = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const userID = res.locals.userID;
+		const sales = await Store.getSales(userID);
+		const forecasts = getForecasts(sales);
+		if (forecasts === null)
+			throw ErrorFactory.badRequest("no enough data to forecast");
+		res.json(forecasts);
+	} catch (e) {
 		next(e);
 	}
 };

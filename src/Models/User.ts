@@ -11,7 +11,7 @@ const userSchema = new Schema(
 	{
 		username: {
 			type: "string",
-			required: true,
+			required: false,
 		},
 		password: {
 			type: "string",
@@ -31,7 +31,7 @@ const userSchema = new Schema(
 		},
 		age: {
 			type: "number",
-			required: true,
+			required: false,
 		},
 		salary: {
 			type: "number",

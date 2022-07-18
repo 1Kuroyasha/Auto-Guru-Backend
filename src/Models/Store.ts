@@ -4,7 +4,7 @@ import MongoController from "../Controllers/mongo-controller";
 import ErrorFactory from "../Types/Error";
 import { Store } from "../Types/interfaces";
 import { CarBodyType, Transmission } from "../Types/types";
-import { includes, indexOf } from "../Utils/general";
+import { getToday, includes, indexOf } from "../Utils/general";
 import logger from "../Utils/logging/logger";
 import CarModel from "./Car";
 
@@ -24,7 +24,12 @@ const storeSchema = new Schema(
 				price: "number",
 			},
 		],
-		sold: "number",
+		sold: [
+			{
+				date: "string",
+				revenue: "number",
+			},
+		],
 	},
 	{
 		strict: true,
@@ -52,7 +57,7 @@ class StoreModel {
 		await this.collection.create({
 			ownerID,
 			bookedCars: [],
-			sold: 0,
+			sold: [],
 			...store,
 			cars: [],
 		});
@@ -187,21 +192,26 @@ class StoreModel {
 		const { cars } = await this.collection.findOne({ ownerID }, { cars: 1 });
 
 		let remove = false;
+		let price = 0;
 
 		for (const car of cars) {
 			if (car.carID === carID) {
+				price = car.price;
 				if (--car.numberAvailable === 0) remove = true;
 				break;
 			}
 		}
 
-		if (remove) await StoreModel.removeCar(ownerID, carID);
-		else await this.collection.updateOne({ ownerID }, { $set: { cars } });
-
 		await this.collection.updateOne(
 			{ ownerID },
-			{ $pull: { bookedCars: carID }, $inc: { sold: 1 } },
+			{
+				$pull: { bookedCars: carID },
+				$push: { sold: { revenue: price, date: getToday() } },
+			},
 		);
+
+		if (remove) await StoreModel.removeCar(ownerID, carID);
+		else await this.collection.updateOne({ ownerID }, { $set: { cars } });
 	}
 
 	public static async getStoresByCarID(carID: string) {
@@ -222,6 +232,16 @@ class StoreModel {
 		});
 
 		return result;
+	}
+
+	public static async getSales(userID: string) {
+		await MongoController.connect();
+		const { sold } = await this.collection.findOne(
+			{ ownerID: userID },
+			{ sold: 1 },
+		);
+
+		return sold;
 	}
 }
 

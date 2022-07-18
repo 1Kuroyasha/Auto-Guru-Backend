@@ -15,6 +15,7 @@ import {
 	register,
 	checkEmailAvailability,
 	validateUser,
+	getForecast,
 } from "../../Handlers/user-handler";
 
 const router = Router();
@@ -39,5 +40,7 @@ router
 	.route("/wishlist/:id")
 	.post(authentication, authorization("CUSTOMER"), addCarToWishlist)
 	.delete(authentication, authorization("CUSTOMER"), removeCarFromWishlist);
+
+router.get("/forecast", authentication, authorization("OWNER"), getForecast);
 
 export default router;

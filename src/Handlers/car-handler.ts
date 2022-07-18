@@ -47,3 +47,16 @@ export const bookCar = async (
 		next(e);
 	}
 };
+
+export const getTrending = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const cars = await Car.getTrendingCars();
+		res.json(cars);
+	} catch (e) {
+		next(e);
+	}
+};

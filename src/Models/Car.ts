@@ -16,6 +16,7 @@ const schema = new Schema(
 		engineCapacity: "number",
 		productionYear: "number",
 		numberOfDoors: "number",
+		price: "number",
 		sold: "number",
 	},
 	{
@@ -26,6 +27,33 @@ const schema = new Schema(
 
 class CarModel {
 	private static collection = model("Car", schema);
+
+	public static async getTrendingCars() {
+		await MongoController.connect();
+
+		return await this.collection.find(
+			{},
+			{
+				_id: 1,
+				make: 1,
+				model: 1,
+				price: 1,
+			},
+			{ sort: { sold: -1 }, limit: 5 },
+		);
+	}
+
+	public static async updatePrice(id: string) {
+		await MongoController.connect();
+
+		const stores = await StoreModel.getStoresByCarID(id);
+		const prices = stores.map(store => store.price);
+
+		const sum = prices.reduce((acc, curr) => acc + curr, 0);
+		const price = sum / prices.length;
+
+		await this.collection.updateOne({ _id: id }, { $set: { price } });
+	}
 
 	public static async createCar(car: Car): Promise<string> {
 		try {
@@ -94,6 +122,7 @@ class CarModel {
 					_id: 1,
 					make: 1,
 					model: 1,
+					price: 1,
 				});
 				return car;
 			}),
