@@ -1,6 +1,6 @@
-import winston, { format } from "winston";
-
 import config from "../../config";
+
+import winston, { format } from "winston";
 
 const { env } = config;
 

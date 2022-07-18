@@ -1,23 +1,30 @@
-export type UserType = "CUSTOMER" | "OWNER";
+import { CarBodyType, Transmission, UserType, CarID, userID } from "./types";
 
 export interface Car {
 	make: string;
 	model: string;
-	bodyType: string;
+	bodyType: CarBodyType;
 	engineCapacity: number;
 	productionYear: number;
-	availableColors: Array<string>;
+	numberOfDoors: number;
+	transmission: Transmission;
 }
 
 export interface Store {
+	owner: userID;
+	name: string;
 	email: string;
 	phone: string;
 	address: string;
 	website: string;
-	cars: Array<Car>;
+	cars?: Array<{
+		carID: CarID;
+		numberAvailable: number;
+		price: number;
+	}>;
 }
 
-export interface User {
+export interface UserInterface {
 	id?: string;
 	username: string;
 	password: string;
@@ -28,12 +35,13 @@ export interface User {
 	userType: UserType;
 }
 
-export interface Customer extends User {
+export interface Customer extends UserInterface {
 	salary?: number;
+	wishlist: Array<CarID>;
 }
 
-export interface Owner extends User {
-	store?: Store;
+export interface Owner extends UserInterface {
+	store: Store;
 }
 
 export interface Credentials {
@@ -41,7 +49,9 @@ export interface Credentials {
 	password: string;
 }
 
-export interface CustomError extends Error {
-	type: string;
-	status: number;
+export interface UserInfo {
+	_id: string;
+	email: string;
+	password: string;
+	userType: string;
 }

@@ -22,6 +22,9 @@
 		"noImplicitThis": true,
 
 		/* Completeness */
-		"skipLibCheck": true
+		"skipLibCheck": true,
+
+		/* To Debug */
+		"sourceMap": true
 	}
 }

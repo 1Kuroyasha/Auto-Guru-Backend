@@ -2,28 +2,22 @@ import config from "../config";
 
 import mongoose, { Mongoose } from "mongoose";
 
-import CustomErrors from "../Structures/Errors";
 import logger from "../Utils/logging/logger";
 
-let connection: Mongoose;
+class MongoController {
+	private static connection: Mongoose;
 
-const connect = async (): Promise<Mongoose> => {
-	if (connection) return connection;
+	public static async connect() {
+		if (!this.connection) {
+			logger.info("Connecting to database server");
 
-	try {
-		logger.info("Connecting to database server");
-		const client = await mongoose.connect(config.DATABASE, {
-			autoIndex: false,
-		});
-		logger.info("Connected to database server");
+			this.connection = await mongoose.connect(config.DATABASE, {
+				autoIndex: false,
+			});
 
-		connection = client;
-		return connection;
-	} catch (e) {
-		throw new CustomErrors.InternalServerError(
-			"Failed to connect to the database server",
-		);
+			logger.info("Connected to database server");
+		}
 	}
-};
+}
 
-export default connect;
+export default MongoController;

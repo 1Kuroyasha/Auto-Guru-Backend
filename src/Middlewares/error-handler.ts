@@ -2,8 +2,19 @@ import config from "../config";
 
 import { NextFunction, Request, Response } from "express";
 
-import { CustomError } from "../Types/interfaces";
+import ErrorFactory, { CustomError } from "../Types/Error";
 import logger from "../Utils/logging/logger";
+
+export const errorAdapter = (
+	err: Error,
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	if (err instanceof CustomError) return next(err);
+
+	next(ErrorFactory.internalServerError(err.message));
+};
 
 export const errorLogger = (
 	err: CustomError,
@@ -15,6 +26,8 @@ export const errorLogger = (
 		logger.error(err.message);
 	}
 
+	// TODO: log error to log file (blocked by file transport implementation)
+
 	next(err);
 };
 
@@ -25,8 +38,9 @@ export const errorHandler = (
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	next: NextFunction,
 ) => {
-	res.status(err.status);
-	if (err.type === "INTERNAL_SERVER_ERROR") return res.send(err.type);
+	const response = {
+		message: err.type === "INTERNAL_SERVER_ERROR" ? err.type : err.message,
+	};
 
-	res.send(err.message);
+	res.status(err.status as number).send(response);
 };

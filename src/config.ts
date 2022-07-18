@@ -25,6 +25,10 @@ const config = convict({
 		format: "*",
 		default: "SecretText",
 	},
+	MICROSERVICE_URI: {
+		format: "*",
+		default: "http://127.0.0.1:5000/",
+	},
 });
 
 const env = config.get("env");
